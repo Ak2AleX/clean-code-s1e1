@@ -38,6 +38,8 @@
 .h1 {
   display: none;
 }
+
+/* Style reset */
 ul {
   margin: 0;
   padding: 0px;
