@@ -35,6 +35,9 @@
 .task-row-wrapper {
   display: flex;
 }
+.h1 {
+  display: none;
+}
 ul {
   margin: 0;
   padding: 0px;

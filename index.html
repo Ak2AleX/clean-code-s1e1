@@ -8,18 +8,19 @@
   <link rel="stylesheet" href="style.css" media="screen" charset="utf-8">
 </head>
 <body class="body">
-  <div class="header">
+  <header class="header">
     <img class="header__img" src="./eisenhower-matrix.jpg">
     <a class="header__more-inf" href="https://goal-life.com/page/method/matrix-eisenhower">Want more details?</a>
-  </div>
-  <div class="main">
-    <p>
+  </header>
+  <main class="main">
+    <section>
+      <h1 class="h1">Todo App</h1>
       <h3 for="new-task" class="add__item-title">Add Item</h3>
       <div class="task-row-wrapper">
         <input id="new-task"class="task new-task" type="text">
         <button>Add</button>
       </div>
-    </p>
+    </section>
     <h3 class="main__task-title">Todo</h3>
     <ul class="uncomplete-tasks">
       <li class="uncomplete-tasks__item">
@@ -44,7 +45,7 @@
         <button class="delete"><img class="delete-img" src="./remove.svg"></button>
       </li>
     </ul>
-  </div>
+  </main>
   <script src="app.js"></script>
 </body>
 </html>
