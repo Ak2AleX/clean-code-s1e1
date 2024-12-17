@@ -30,7 +30,7 @@
 .task {
   width: 56%;
   display: inline-block;
-  flex-grow: 1
+  flex-grow: 1;
 }
 .task-row-wrapper {
   display: flex;
@@ -140,12 +140,10 @@ button:hover {
 .completed-tasks .task {
   display: none;
 }
-
 .edit-mode .task {
   display: inline-block;
   width: 224px;
 }
-
 .edit-mode .task-text {
   display: none;
 }
