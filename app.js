@@ -65,9 +65,7 @@ const editTask = function () {
 };
 
 const deleteTask = function () {
-  const taskItem = this.parentNode;
-  const taskList = taskItem.parentNode;
-  taskList.removeChild(taskItem);
+  this.parentNode.remove();
 };
 
 const taskCompleted = function () {
@@ -94,10 +92,11 @@ const bindTaskEvents = function (tasktaskItem, checkBoxEventHandler) {
   taskCheckbox.onchange = checkBoxEventHandler;
 };
 
-for (let i = 0; i < todoList.children.length; i++) {
-  bindTaskEvents(todoList.children[i], taskCompleted);
-}
+const bindTasksInList = (taskList, checkboxHandler) => {
+  taskList.querySelectorAll('li').forEach((taskItem) => {
+    bindTaskEvents(taskItem, checkboxHandler);
+  });
+};
 
-for (let i = 0; i < completedList.children.length; i++) {
-  bindTaskEvents(completedList.children[i], taskIncomplete);
-}
+bindTasksInList(todoList, taskCompleted);
+bindTasksInList(completedList, taskIncomplete);
