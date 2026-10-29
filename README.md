@@ -1,14 +1,59 @@
-<img width="1199" alt="code-quality-task-screenshot" src="https://user-images.githubusercontent.com/8201843/113413843-4080fb80-93c4-11eb-9f20-15e4b4c1e430.png">
+# Clean Code: TODO-приложение
 
-# Application Functionality :
+Учебный репозиторий для задания [«Clean Code»](https://github.com/rolling-scopes-school/tasks/blob/master/fullstack-engineering/tasks/clean-code/README.md) курса RS School Fullstack Engineering.
 
-- Adding a new item to the "TODO" tasks list.
-- Editing an item in the "TODO" tasks list.
-- Deleting an item from the "TODO" tasks list.
-- Marking an item as "COMPLETED" and moving it to the corresponding list via the checkbox.
-- Deleting an item from the "COMPLETED" list.
-- Editing an item in the "COMPLETED" list.
-- Marking an item as incomplete via the checkbox and moving it into the "TODO" tasks list.
-- The appearance of the application has not been changed.
-- Alternate text is present for all necessary images.
-- The delete button animation works.
+Перед вами небольшое работающее приложение для списка задач. Код в нём написан намеренно небрежно: это материал для рефакторинга, а не образец. Ваша задача — сделать код читаемым, не изменив поведение приложения.
+
+## Что умеет приложение
+
+- Добавлять задачу в список «Todo»
+- Редактировать задачу в любом из списков
+- Удалять задачу из любого из списков
+- Переносить задачу в «Completed» по чекбоксу и обратно в «Todo» при снятии чекбокса
+- Не добавлять пустую задачу
+
+## Структура
+
+```
+index.html             разметка
+style.css              стили
+app.js                 логика
+remove.svg             иконка кнопки удаления
+eisenhower-matrix.jpg  изображение в шапке
+```
+
+Сборщика и зависимостей нет. Чтобы запустить приложение, откройте `index.html` в браузере.
+
+## Чек-лист поведения
+
+После любых изменений приложение должно проходить этот список. Он же используется при проверке задания.
+
+- [ ] Новая задача добавляется в список «Todo»
+- [ ] Задача в списке «Todo» редактируется
+- [ ] Задача удаляется из списка «Todo»
+- [ ] Чекбокс переносит задачу в «Completed»
+- [ ] Задача в списке «Completed» редактируется
+- [ ] Задача удаляется из списка «Completed»
+- [ ] Снятие чекбокса возвращает задачу в «Todo»
+- [ ] Пустая задача не добавляется
+- [ ] Внешний вид приложения не изменился
+- [ ] Анимация кнопки удаления работает
+
+## Как работать с репозиторием
+
+1. Сделайте fork в свой аккаунт GitHub.
+2. Откройте вкладку **Actions** в своём форке и включите workflows кнопкой «I understand my workflows, go ahead and enable them». В форках GitHub выключает их по умолчанию.
+3. Работайте в отдельной ветке своего форка, `main` не изменяйте.
+4. Pull Request открывайте **в `main` своего форка**, а не в этот репозиторий. Проверяется ссылка на этот Pull Request.
+
+Порядок выполнения, требования и критерии оценки описаны в [задании](https://github.com/rolling-scopes-school/tasks/blob/master/fullstack-engineering/tasks/clean-code/README.md).
+
+## Автоматическая проверка
+
+В репозитории есть workflow `.github/workflows/check.yml`. Он запускается на каждый Pull Request и проверяет, что ESLint, Prettier и Husky настроены, `node_modules` не закоммичен, а код проходит линтер и форматтер. Пока инструменты не настроены, проверка красная: это ожидаемо. Причина каждой ошибки написана на русском прямо на странице PR.
+
+Изменять или удалять этот файл нельзя: ревьюер сверяет его с оригиналом.
+
+## Происхождение
+
+Репозиторий основан на [rolling-scopes-school/clean-code-s1e1](https://github.com/rolling-scopes-school/clean-code-s1e1), стартовом проекте задания Clean Code S1E1 первого этапа RS School. Код приложения сохранён без изменений.

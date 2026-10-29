@@ -1,0 +1,108 @@
+name: Проверка инструментов
+
+# Запускается на каждый Pull Request в форке студента.
+# Падает, пока не настроены ESLint, Prettier и Husky и пока код не проходит их проверки.
+# Файл менять нельзя: ревьюер сверяет его с оригиналом.
+
+on:
+  pull_request:
+
+jobs:
+  check:
+    name: ESLint, Prettier, Husky
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получить код
+        uses: actions/checkout@v5
+
+      - name: Установить Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Проверить, что инструменты настроены
+        shell: bash
+        run: |
+          fail=0
+          error() { echo "::error::$1"; fail=1; }
+          any_of() { for f in "$@"; do [ -f "$f" ] && return 0; done; return 1; }
+
+          if [ ! -f package.json ]; then
+            error "Нет package.json. Инструменты не настроены: выполните часть задания про ESLint, Prettier и Husky."
+            exit 1
+          fi
+
+          if any_of eslint.config.js eslint.config.mjs eslint.config.cjs; then
+            for rule in no-var prefer-const no-console; do
+              grep -q "$rule" eslint.config.js eslint.config.mjs eslint.config.cjs 2>/dev/null \
+                || error "В конфиге ESLint нет правила $rule. Задание требует правила no-var, prefer-const и no-console."
+            done
+          else
+            error "Нет eslint.config.js. ESLint не настроен или конфиг в устаревшем формате .eslintrc, который ESLint больше не читает."
+          fi
+
+          any_of .prettierrc .prettierrc.json .prettierrc.yaml .prettierrc.yml .prettierrc.json5 \
+                 .prettierrc.js .prettierrc.mjs .prettierrc.cjs .prettierrc.toml \
+                 prettier.config.js prettier.config.mjs prettier.config.cjs \
+            || node -e 'process.exit(require("./package.json").prettier ? 0 : 1)' \
+            || error "Нет конфига Prettier: файла .prettierrc или поля prettier в package.json."
+
+          node -e 'process.exit((require("./package.json").scripts || {}).lint ? 0 : 1)' \
+            || error "В package.json нет скрипта lint."
+
+          node -e 'process.exit((require("./package.json").scripts || {}).format ? 0 : 1)' \
+            || error "В package.json нет скрипта format."
+
+          node -e 'process.exit(((require("./package.json").scripts || {}).prepare || "").includes("husky") ? 0 : 1)' \
+            || error "В package.json нет скрипта prepare, запускающего husky. Без него хуки не установятся у тех, кто клонирует репозиторий."
+
+          if [ ! -f .husky/pre-commit ]; then
+            error "Нет файла .husky/pre-commit. Husky не настроен."
+          else
+            grep -Eq 'lint-staged|prettier|eslint|npm run' .husky/pre-commit \
+              || error "Хук .husky/pre-commit не запускает ни линтер, ни форматтер."
+            if grep -q 'prettier --write' .husky/pre-commit && ! grep -q 'lint-staged' .husky/pre-commit; then
+              error "В хуке prettier --write без lint-staged: отформатированные файлы не попадут в коммит. Используйте prettier --check или lint-staged."
+            fi
+          fi
+
+          grep -q 'node_modules' .gitignore 2>/dev/null \
+            || error "node_modules не добавлен в .gitignore."
+
+          [ -n "$(git ls-files node_modules | head -1)" ] \
+            && error "Папка node_modules закоммичена в репозиторий. Удалите её из индекса и добавьте в .gitignore."
+
+          if [ -f .prettierignore ] && grep -Eq '^\s*(/?index\.html|/?style\.css|\*\.html|\*\.css|\*\*/\*\.html|\*\*/\*\.css)\s*$' .prettierignore; then
+            error "index.html и style.css нельзя исключать из форматирования через .prettierignore. Исправьте разметку и стили так, чтобы Prettier их принимал."
+          fi
+
+          exit $fail
+
+      - name: Определить пакетный менеджер
+        shell: bash
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            npm install -g pnpm >/dev/null
+            echo "PM=pnpm" >> "$GITHUB_ENV"
+          elif [ -f yarn.lock ]; then
+            npm install -g yarn >/dev/null
+            echo "PM=yarn" >> "$GITHUB_ENV"
+          else
+            echo "PM=npm" >> "$GITHUB_ENV"
+          fi
+
+      - name: Установить зависимости
+        shell: bash
+        run: |
+          case "$PM" in
+            pnpm) pnpm install ;;
+            yarn) yarn install ;;
+            *) if [ -f package-lock.json ]; then npm ci; else npm install; fi ;;
+          esac
+
+      - name: ESLint
+        run: $PM run lint
+
+      - name: Prettier
+        run: ./node_modules/.bin/prettier --check .
